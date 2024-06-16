@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultElement = document.getElementById('result');
     let scanning = false;
 
-    const apiKey = 'TU_API_KEY'; // Reemplaza con tu clave de API de Google
-    const spreadsheetId = 'TU_ID_DE_HOJA_DE_CALCULO'; // Reemplaza con el ID de tu hoja de cálculo
-    const sheetName = 'Sheet1'; // Reemplaza con el nombre de tu hoja de cálculo
+    const apiKey = 'AIzaSyDm6d6BmC8Kco00EspVcmpUHIzxu0K5vG4'; // Reemplaza con tu clave de API de Google
+    const spreadsheetId = 'https://docs.google.com/spreadsheets/d/1OyOanAl_4iX9iOZcAjdbkpOZ4NdeU20dgicUSuxxwds/edit?usp=drivesdk'; // Reemplaza con el ID de tu hoja de cálculo
+    const sheetName = 'Codigo_Barras'; // Reemplaza con el nombre de tu hoja de cálculo
 
     async function fetchSheetData() {
         const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}?key=${apiKey}`);
