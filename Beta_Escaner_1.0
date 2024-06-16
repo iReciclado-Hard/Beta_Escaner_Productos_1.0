@@ -1,0 +1,64 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const codeReader = new ZXing.BrowserMultiFormatReader();
+    const videoElement = document.getElementById('video-preview');
+    const beepSound = document.getElementById('beep-sound');
+    const resultElement = document.getElementById('result');
+    let scanning = false;
+
+    const apiKey = 'TU_API_KEY'; // Reemplaza con tu clave de API de Google
+    const spreadsheetId = 'TU_ID_DE_HOJA_DE_CALCULO'; // Reemplaza con el ID de tu hoja de cálculo
+    const sheetName = 'Sheet1'; // Reemplaza con el nombre de tu hoja de cálculo
+
+    async function fetchSheetData() {
+        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}?key=${apiKey}`);
+        const data = await response.json();
+        return data.values;
+    }
+
+    async function findProductData(code) {
+        const data = await fetchSheetData();
+        const header = data[0];
+        const rows = data.slice(1);
+
+        for (const row of rows) {
+            const rowData = {};
+            row.forEach((cell, index) => {
+                rowData[header[index]] = cell;
+            });
+
+            if (rowData['Código'] === code) {
+                return rowData;
+            }
+        }
+        return null;
+    }
+
+    document.getElementById('startScan').addEventListener('click', () => {
+        if (!scanning) {
+            resultElement.innerText = 'Escaneando...';
+            resultElement.style.display = 'block';
+
+            codeReader.decodeFromVideoDevice(undefined, 'video-preview', async (result, err) => {
+                if (result) {
+                    beepSound.play();
+                    const productData = await findProductData(result.text);
+                    if (productData) {
+                        resultElement.innerText = `Artículo: ${productData['Nombre del Artículo']}\nPrecio: ${productData['Precio']}`;
+                    } else {
+                        resultElement.innerText = 'Código no encontrado en la planilla.';
+                    }
+                    resultElement.style.display = 'block';
+                    codeReader.reset();
+                    scanning = false;
+                } else if (err && !(err instanceof ZXing.NotFoundException)) {
+                    console.error('Error al escanear el código:', err);
+                    alert('Error al escanear el código. Intenta nuevamente.');
+                }
+            }).catch((err) => {
+                console.error('Error al acceder a la cámara:', err);
+                alert('Error al acceder a la cámara. Por favor, verifica los permisos y vuelve a intentarlo.');
+            });
+            scanning = true;
+        }
+    });
+});
