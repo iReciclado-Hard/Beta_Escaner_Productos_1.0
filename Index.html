@@ -86,7 +86,7 @@
         });
 
         async function fetchProductData() {
-            const response = await fetch('productos.json');
+            const response = await fetch('https://ireciclado-hard.github.io/Beta_Escaner_Productos_1.0/productos.json');
             const data = await response.json();
             return data;
         }
