@@ -91,18 +91,34 @@
             const resultElement = document.getElementById('result');
             let scanning = false;
 
-            const apiKey = 'AIzaSyDm6d6BmC8Kco00EspVcmpUHIzxu0K5vG4'; // Reemplaza con tu clave de API de Google
-            const spreadsheetId = '1OyOanAl_4iX9iOZcAjdbkpOZ4NdeU20dgicUSuxxwds/'; // Reemplaza con el ID de tu hoja de cálculo
-            const sheetName = 'Codigo_Barras'; // Reemplaza con el nombre de tu hoja de cálculo
+            const apiKey = ''; // Reemplaza con tu clave de API de Google
+            const spreadsheetId = '1A2B3C4D5E6F7G8H9IJKLMNOPQ'; // Reemplaza con el ID de tu hoja de cálculo
+            const sheetName = 'Sheet1'; // Reemplaza con el nombre de tu hoja de cálculo
 
+            // Esta función obtiene los datos de la hoja de cálculo
             async function fetchSheetData() {
-                const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}?key=${apiKey}`);
-                const data = await response.json();
-                return data.values;
+                try {
+                    const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}?key=${apiKey}`);
+                    const data = await response.json();
+                    if (data.error) {
+                        console.error('Error al obtener datos de Google Sheets:', data.error);
+                        resultElement.innerText = 'Error al obtener datos de Google Sheets. Revisa la consola.';
+                        return null;
+                    }
+                    return data.values;
+                } catch (err) {
+                    console.error('Error al conectar con Google Sheets:', err);
+                    resultElement.innerText = 'Error al conectar con Google Sheets. Revisa la consola.';
+                    return null;
+                }
             }
 
+            // Esta función busca el código escaneado en los datos de la hoja de cálculo
             async function findProductData(code) {
                 const data = await fetchSheetData();
+                if (!data) {
+                    return null;
+                }
                 const header = data[0];
                 const rows = data.slice(1);
 
@@ -127,6 +143,7 @@
                     codeReader.decodeFromVideoDevice(undefined, 'video-preview', async (result, err) => {
                         if (result) {
                             beepSound.play();
+                            console.log('Código escaneado:', result.text);
                             const productData = await findProductData(result.text);
                             if (productData) {
                                 resultElement.innerText = `Artículo: ${productData['Nombre del Artículo']}\nPrecio: ${productData['Precio']}`;
