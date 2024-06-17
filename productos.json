@@ -1,0 +1,32 @@
+[
+  {
+    "codigo": "6925749700155",
+    "nombre": "Patillera Vintaje VT9 Recargable",
+    "precio": 14900,
+    "descripcion": "Patillera Recargable USB"
+  },
+  {
+    "codigo": "0987654321",
+    "nombre": "Smartphone Samsung Galaxy S21",
+    "precio": 90000,
+    "descripcion": "Samsung Galaxy S21 con pantalla de 6.2 pulgadas, 128GB de almacenamiento y cámara de 64MP."
+  },
+  {
+    "codigo": "1122334455",
+    "nombre": "Televisor LG OLED 55\"",
+    "precio": 120000,
+    "descripcion": "Televisor LG OLED de 55 pulgadas con resolución 4K y soporte para HDR."
+  },
+  {
+    "codigo": "5566778899",
+    "nombre": "Auriculares Sony WH-1000XM4",
+    "precio": 20000,
+    "descripcion": "Auriculares inalámbricos Sony con cancelación de ruido y hasta 30 horas de batería."
+  },
+  {
+    "codigo": "6677889900",
+    "nombre": "Cámara Canon EOS M50",
+    "precio": 85000,
+    "descripcion": "Cámara sin espejo Canon EOS M50 con lente de 15-45mm, 24.1 MP y grabación de video 4K."
+  }
+]
