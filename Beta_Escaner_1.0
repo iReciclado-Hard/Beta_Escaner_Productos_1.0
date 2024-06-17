@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultElement = document.getElementById('result');
     let scanning = false;
 
-    const apiKey = 'AIzaSyDm6d6BmC8Kco00EspVcmpUHIzxu0K5vG4'; // Reemplaza con tu clave de API de Google
-    const spreadsheetId = 'https://docs.google.com/spreadsheets/d/1OyOanAl_4iX9iOZcAjdbkpOZ4NdeU20dgicUSuxxwds/edit?usp=drivesdk'; // Reemplaza con el ID de tu hoja de cálculo
+    const apiKey = 'ID_key'; // Reemplaza con tu clave de API de Google
+    const spreadsheetId = 'https://docs.google.com/spreadsheets/d/1OyOanAl_4'; // Reemplaza con el ID de tu hoja de cálculo
     const sheetName = 'Codigo_Barras'; // Reemplaza con el nombre de tu hoja de cálculo
 
     async function fetchSheetData() {
