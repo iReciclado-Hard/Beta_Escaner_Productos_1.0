@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             decoder: {
                 readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"] // Tipos de códigos de barras que se desean detectar
-            }
+            },
+            locate: true // Habilita la localización para centrar la detección
         }, function(err) {
             if (err) {
                 console.error('Error al inicializar Quagga:', err);
@@ -104,7 +105,7 @@ function displayProductData(productData) {
         productContainer.innerHTML = `
             <p><strong>Nombre del Artículo:</strong> ${productData['Nombre del Artículo']}</p>
             <p><strong>Precio:</strong> ${productData['Precio']}</p>
-            <p class="sugerido"><strong>Sugerido:</strong> ${productData['Sugerido']}</p>
+            <p class="sugerido" style="color: red; font-size: larger;"><strong>Sugerido:</strong> ${productData['Sugerido']}</p>
         `;
     } else {
         productContainer.innerHTML = `<p>Producto no encontrado.</p>`;
