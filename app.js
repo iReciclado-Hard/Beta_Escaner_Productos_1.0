@@ -1,70 +1,63 @@
 document.addEventListener('DOMContentLoaded', () => {
     const startScanButton = document.getElementById('startScan');
     const stopScanButton = document.getElementById('stopScan');
-    const cameraSelect = document.getElementById('cameraSelect');
-
+    const videoElement = document.getElementById('video-preview');
     let scanning = false;
-    let quaggaInitialized = false;
 
-    // Función para inicializar QuaggaJS
+    // Configuración de QuaggaJS
     function initializeQuagga() {
         Quagga.init({
             inputStream: {
                 name: "Live",
                 type: "LiveStream",
-                target: document.getElementById('video-preview'),
+                target: videoElement,
                 constraints: {
-                    facingMode: "environment" // Utilizar cámara trasera si está disponible
+                    facingMode: "environment" // Utilizar cámara trasera
                 },
             },
-            locator: {
-                patchSize: "medium",
-                halfSample: true,
-            },
-            numOfWorkers: navigator.hardwareConcurrency || 4,
             decoder: {
-                readers: ["ean_reader", "upc_reader"]
-            },
-            locate: true
+                readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"] // Tipos de códigos de barras que se desean detectar
+            }
         }, function(err) {
             if (err) {
                 console.error('Error al inicializar Quagga:', err);
                 return;
             }
-            console.log('Quagga inicializado correctamente');
-            quaggaInitialized = true;
+            Quagga.start();
+            scanning = true;
+            startScanButton.style.display = 'none';
+            stopScanButton.style.display = 'inline-block';
+            console.log('Quagga inicializado y escaneo iniciado.');
+        });
+
+        // Manejador para cuando se detecta un código
+        Quagga.onDetected((result) => {
+            const code = result.codeResult.code;
+            console.log('Código de barras detectado:', code);
+            findProductData(code).then(productData => displayProductData(productData));
         });
     }
-
-    // Función para iniciar el escaneo
-    startScanButton.addEventListener('click', () => {
-        if (!quaggaInitialized) {
-            initializeQuagga();
-        }
-
-        if (!scanning) {
-            Quagga.start();
-            Quagga.onDetected(detectedHandler);
-            scanning = true;
-        }
-    });
 
     // Función para detener el escaneo
     stopScanButton.addEventListener('click', () => {
         if (scanning) {
             Quagga.stop();
             scanning = false;
+            startScanButton.style.display = 'inline-block';
+            stopScanButton.style.display = 'none';
+            videoElement.srcObject.getTracks().forEach(track => track.stop()); // Detiene el flujo de la cámara
             document.getElementById('productInfo').innerHTML = ''; // Limpiar la información del producto
+            console.log('Escaneo detenido.');
+        }
+    });
+
+    // Iniciar el escaneo al hacer clic en el botón
+    startScanButton.addEventListener('click', () => {
+        if (!scanning) {
+            initializeQuagga();
         }
     });
 });
-
-// Manejador para los códigos de barras detectados
-function detectedHandler(result) {
-    const code = result.codeResult.code;
-    console.log('Código de barras detectado:', code);
-    findProductData(code).then(productData => displayProductData(productData));
-}
 
 // Función para obtener datos de Google Sheets
 async function fetchSheetData() {
