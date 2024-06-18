@@ -146,7 +146,7 @@
                             console.log('Código escaneado:', result.text);
                             const productData = await findProductData(result.text);
                             if (productData) {
-                                resultElement.innerText = `Artículo: ${productData['Nombre del Artículo']}\nPrecio: ${productData['Precio']}`;
+                                resultElement.innerText = `Artículo: ${productData['Nombre del Articulo']}\nPrecio: ${productData['Precio']}`;
                             } else {
                                 resultElement.innerText = 'Código no encontrado en la planilla.';
                             }
