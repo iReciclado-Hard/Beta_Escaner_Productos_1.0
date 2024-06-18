@@ -1,7 +1,88 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const codeReader = new ZXing.BrowserQRCodeReader();
+    const videoElement = document.getElementById('video-preview');
+    let scanning = false;
+
+    const cameraSelect = document.getElementById('cameraSelect');
+
+    // Obtener y listar las cámaras disponibles
+    codeReader.listVideoInputDevices().then(videoInputDevices => {
+        videoInputDevices.forEach((device, index) => {
+            const option = document.createElement('option');
+            option.value = device.deviceId;
+            option.text = device.label || `Cámara ${index + 1}`;
+            cameraSelect.appendChild(option);
+        });
+
+        // Intentar seleccionar automáticamente la cámara trasera
+        const backCamera = videoInputDevices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('environment'));
+        if (backCamera) {
+            cameraSelect.value = backCamera.deviceId;
+            // Aplicar la clase .inverted si estamos usando la cámara trasera
+            videoElement.classList.add('inverted');
+        } else {
+            // En caso contrario, quitar la clase .inverted
+            videoElement.classList.remove('inverted');
+        }
+    }).catch(err => console.error('Error al obtener las cámaras:', err));
+
+    // Iniciar el escaneo
+    document.getElementById('startScan').addEventListener('click', () => {
+        if (!scanning) {
+            const selectedDeviceId = cameraSelect.value;
+            codeReader.decodeFromVideoDevice(selectedDeviceId, 'video-preview', (result, err) => {
+                if (result) {
+                    console.log(result.text);
+                    findProductData(result.text).then(productData => displayProductData(productData));
+                }
+                if (err && !(err instanceof ZXing.NotFoundException)) {
+                    console.error('Error al escanear el código:', err);
+                }
+            });
+            scanning = true;
+        }
+    });
+
+    // Detener el escaneo
+    document.getElementById('stopScan').addEventListener('click', () => {
+        if (scanning) {
+            codeReader.reset();
+            scanning = false;
+            document.getElementById('productInfo').innerHTML = ''; // Limpiar la información del producto
+        }
+    });
+
+    // Cambiar la cámara seleccionada
+    cameraSelect.addEventListener('change', () => {
+        if (scanning) {
+            // Reiniciar el escaneo con la nueva cámara seleccionada
+            codeReader.reset();
+            const selectedDeviceId = cameraSelect.value;
+            codeReader.decodeFromVideoDevice(selectedDeviceId, 'video-preview', (result, err) => {
+                if (result) {
+                    console.log(result.text);
+                    findProductData(result.text).then(productData => displayProductData(productData));
+                }
+                if (err && !(err instanceof ZXing.NotFoundException)) {
+                    console.error('Error al escanear el código:', err);
+                }
+            });
+
+            // Aplicar o quitar la clase .inverted en función de la cámara seleccionada
+            const selectedOption = cameraSelect.selectedOptions[0];
+            if (selectedOption.text.toLowerCase().includes('back') || selectedOption.text.toLowerCase().includes('environment')) {
+                videoElement.classList.add('inverted');
+            } else {
+                videoElement.classList.remove('inverted');
+            }
+        }
+    });
+});
+
 // Función para obtener datos de Google Sheets
 async function fetchSheetData() {
     const sheetId = '1OyOanAl_4iX9iOZcAjdbkpOZ4NdeU20dgicUSuxxwds'; // Reemplaza con el ID de tu hoja de Google
-    const sheetName = 'CodigoBarras'; // Reemplaza con el nombre de la hoja
+    const sheetName = 'BarCode'; // Reemplaza con el nombre de la hoja
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=AIzaSyDm6d6BmC8Kco00EspVcmpUHIzxu0K5vG4`; // Reemplaza TU_API_KEY con tu clave de API de Google
 
     try {
@@ -38,32 +119,14 @@ async function findProductData(code) {
 
 // Función para mostrar los datos del producto en la página
 function displayProductData(productData) {
+    const productContainer = document.getElementById('productInfo');
     if (productData) {
-        const productContainer = document.getElementById('productInfo');
-        // Limpiamos el contenedor
         productContainer.innerHTML = `
             <p><strong>Nombre del Artículo:</strong> ${productData['Nombre del Artículo']}</p>
             <p><strong>Precio:</strong> ${productData['Precio']}</p>
             <p class="sugerido"><strong>Sugerido:</strong> ${productData['Sugerido']}</p>
         `;
     } else {
-        alert('Producto no encontrado.');
+        productContainer.innerHTML = `<p>Producto no encontrado.</p>`;
     }
 }
-
-// Configuración de Instascan
-const scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-scanner.addListener('scan', function (content) {
-    console.log(content);
-    findProductData(content).then(productData => displayProductData(productData));
-});
-
-Instascan.Camera.getCameras().then(function (cameras) {
-    if (cameras.length > 0) {
-        scanner.start(cameras[0]);
-    } else {
-        console.error('No se encontraron cámaras.');
-    }
-}).catch(function (e) {
-    console.error(e);
-});
