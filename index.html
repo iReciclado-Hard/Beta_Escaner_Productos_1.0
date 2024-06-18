@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escanear Producto</title>
+    <title>Escanear Código de Barras</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="scanner-container">
-        <h2>Escanear Producto</h2>
+        <h2>Escanear Código de Barras</h2>
         <button id="startScan">Iniciar Escaneo</button>
         <button id="stopScan">Detener Escaneo</button>
         <select id="cameraSelect"></select> <!-- Selector de cámaras -->
@@ -16,8 +16,8 @@
         <div id="productInfo"></div> <!-- Contenedor para mostrar la información del producto -->
     </div>
 
-    <!-- Incluye la librería ZXing -->
-    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <!-- Incluir QuaggaJS -->
+    <script src="https://unpkg.com/quagga"></script>
     <script src="app.js"></script>
 </body>
 </html>
