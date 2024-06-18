@@ -9,14 +9,17 @@
 <body>
     <div class="scanner-container">
         <h2>Escanear Producto</h2>
+        <button id="startScan">Iniciar Escaneo</button>
+        <button id="stopScan">Detener Escaneo</button>
         <select id="cameraSelect"></select> <!-- Selector de cámaras -->
-        <video id="preview"></video>
-        <div id="productInfo">
-            <!-- Aquí se mostrarán los datos del producto -->
+        <video id="video-preview" autoplay></video>
+        <div id="result" style="display: none;">
+            <!-- Aquí se mostrarán los datos del escaneo -->
         </div>
     </div>
 
-    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <!-- Incluye la librería ZXing -->
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
     <script src="app.js"></script>
 </body>
 </html>
