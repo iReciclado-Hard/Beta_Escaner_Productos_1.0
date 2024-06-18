@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const productContainer = document.getElementById('productInfo');
         if (productData) {
             productContainer.innerHTML = `
-                <p><strong>Nombre del Artículo:</strong> ${productData['Nombre del Artículo']}</p>
+                <p><strong>Nombre del Articulo:</strong> ${productData['Nombre del Artículo']}</p>
                 <p><strong>Precio:</strong> ${productData['Precio']}</p>
                 <p class="sugerido" style="color: red; font-size: larger;"><strong>Sugerido:</strong> ${productData['Sugerido']}</p>
             `;
