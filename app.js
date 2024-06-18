@@ -2,7 +2,7 @@
 async function fetchSheetData() {
     const sheetId = '1OyOanAl_4iX9iOZcAjdbkpOZ4NdeU20dgicUSuxxwds'; // Reemplaza con el ID de tu hoja de Google
     const sheetName = 'CodigoBarras'; // Reemplaza con el nombre de la hoja
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=TU_API_KEY`; // Reemplaza TU_API_KEY con tu clave de API de Google
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=AIzaSyDm6d6BmC8Kco00EspVcmpUHIzxu0K5vG4`; // Reemplaza TU_API_KEY con tu clave de API de Google
 
     try {
         const response = await fetch(url);
