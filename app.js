@@ -60,6 +60,8 @@ scanner.addListener('scan', function (content) {
 
 Instascan.Camera.getCameras().then(function (cameras) {
     const cameraSelect = document.getElementById('cameraSelect');
+    const videoElement = document.getElementById('preview');
+    
     if (cameras.length > 0) {
         cameras.forEach((camera, index) => {
             // Añadir las opciones al selector de cámaras
@@ -69,18 +71,35 @@ Instascan.Camera.getCameras().then(function (cameras) {
             cameraSelect.appendChild(option);
         });
 
-        // Selecciona la cámara trasera si existe
         let selectedCamera = cameras[0];
         cameras.forEach(camera => {
             if (camera.name.toLowerCase().includes('back') || camera.name.toLowerCase().includes('environment')) {
                 selectedCamera = camera;
             }
         });
+
+        // Aplicar la clase .inverted si se usa la cámara trasera
+        if (selectedCamera.name.toLowerCase().includes('back') || selectedCamera.name.toLowerCase().includes('environment')) {
+            videoElement.classList.add('inverted');
+        } else {
+            videoElement.classList.remove('inverted');
+        }
+
         scanner.start(selectedCamera);
 
         // Cambiar la cámara al seleccionar una diferente
         cameraSelect.addEventListener('change', function () {
-            scanner.start(cameras[this.value]);
+            const cameraIndex = this.value;
+            const selectedCamera = cameras[cameraIndex];
+
+            // Aplicar o remover la clase .inverted
+            if (selectedCamera.name.toLowerCase().includes('back') || selectedCamera.name.toLowerCase().includes('environment')) {
+                videoElement.classList.add('inverted');
+            } else {
+                videoElement.classList.remove('inverted');
+            }
+
+            scanner.start(selectedCamera);
         });
     } else {
         console.error('No se encontraron cámaras.');
