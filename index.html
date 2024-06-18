@@ -14,11 +14,13 @@
         <div id="video-container">
             <video id="video-preview" autoplay></video>
         </div>
+        <div id="result"></div> <!-- Contenedor para mostrar el resultado del escaneo -->
         <div id="productInfo"></div> <!-- Contenedor para mostrar la información del producto -->
     </div>
 
-    <!-- Incluir QuaggaJS -->
-    <script src="https://unpkg.com/quagga"></script>
+    <!-- Incluir ZXing y el sonido de bip -->
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <audio id="beep-sound" src="https://example.com/beep.mp3" preload="auto"></audio>
     <script src="app.js"></script>
 </body>
 </html>
