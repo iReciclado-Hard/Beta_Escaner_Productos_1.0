@@ -60,7 +60,13 @@ scanner.addListener('scan', function (content) {
 
 Instascan.Camera.getCameras().then(function (cameras) {
     if (cameras.length > 0) {
-        scanner.start(cameras[0]);
+        let selectedCamera = cameras[0]; // Por defecto seleccionamos la primera cámara
+        cameras.forEach(camera => {
+            if (camera.name.toLowerCase().includes('back') || camera.name.toLowerCase().includes('environment')) {
+                selectedCamera = camera; // Preferimos la cámara trasera o de entorno
+            }
+        });
+        scanner.start(selectedCamera);
     } else {
         console.error('No se encontraron cámaras.');
     }
