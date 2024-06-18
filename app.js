@@ -4,36 +4,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const cameraSelect = document.getElementById('cameraSelect');
 
     let scanning = false;
+    let quaggaInitialized = false;
 
-    // Configurar QuaggaJS
-    Quagga.init({
-        inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: document.getElementById('video-preview'),
-            constraints: {
-                facingMode: "environment" // Utilizar cámara trasera si está disponible
+    // Función para inicializar QuaggaJS
+    function initializeQuagga() {
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.getElementById('video-preview'),
+                constraints: {
+                    facingMode: "environment" // Utilizar cámara trasera si está disponible
+                },
             },
-        },
-        locator: {
-            patchSize: "medium",
-            halfSample: true,
-        },
-        numOfWorkers: navigator.hardwareConcurrency || 4,
-        decoder: {
-            readers: ["ean_reader", "upc_reader"]
-        },
-        locate: true
-    }, function(err) {
-        if (err) {
-            console.error('Error al inicializar Quagga:', err);
-            return;
-        }
-        console.log('Quagga inicializado correctamente');
-    });
+            locator: {
+                patchSize: "medium",
+                halfSample: true,
+            },
+            numOfWorkers: navigator.hardwareConcurrency || 4,
+            decoder: {
+                readers: ["ean_reader", "upc_reader"]
+            },
+            locate: true
+        }, function(err) {
+            if (err) {
+                console.error('Error al inicializar Quagga:', err);
+                return;
+            }
+            console.log('Quagga inicializado correctamente');
+            quaggaInitialized = true;
+        });
+    }
 
     // Función para iniciar el escaneo
     startScanButton.addEventListener('click', () => {
+        if (!quaggaInitialized) {
+            initializeQuagga();
+        }
+
         if (!scanning) {
             Quagga.start();
             Quagga.onDetected(detectedHandler);
