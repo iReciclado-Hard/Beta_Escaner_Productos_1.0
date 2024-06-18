@@ -59,20 +59,29 @@ scanner.addListener('scan', function (content) {
 });
 
 Instascan.Camera.getCameras().then(function (cameras) {
+    const cameraSelect = document.getElementById('cameraSelect');
     if (cameras.length > 0) {
-        // Imprime los nombres de las cámaras en la consola
         cameras.forEach((camera, index) => {
-            console.log(`Cámara ${index + 1}: ${camera.name}`);
+            // Añadir las opciones al selector de cámaras
+            const option = document.createElement('option');
+            option.value = index;
+            option.text = camera.name || `Cámara ${index + 1}`;
+            cameraSelect.appendChild(option);
         });
 
-        let selectedCamera = cameras[0]; // Por defecto seleccionamos la primera cámara
+        // Selecciona la cámara trasera si existe
+        let selectedCamera = cameras[0];
         cameras.forEach(camera => {
-            // Selecciona la cámara trasera si su nombre incluye 'back' o 'environment'
             if (camera.name.toLowerCase().includes('back') || camera.name.toLowerCase().includes('environment')) {
                 selectedCamera = camera;
             }
         });
         scanner.start(selectedCamera);
+
+        // Cambiar la cámara al seleccionar una diferente
+        cameraSelect.addEventListener('change', function () {
+            scanner.start(cameras[this.value]);
+        });
     } else {
         console.error('No se encontraron cámaras.');
     }
