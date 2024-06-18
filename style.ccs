@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+    margin: 0;
+}
+
+.scanner-container {
+    text-align: center;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.scanner-container h2 {
+    margin-bottom: 20px;
+}
+
+video {
+    width: 100%;
+    max-width: 400px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+}
+
+#productInfo {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#productInfo p {
+    margin: 10px 0;
+}
+
+#productInfo p.sugerido {
+    color: red;
+    font-size: 1.5em; /* Ajusta el tamaño de la fuente según tus necesidades */
+    font-weight: bold;
+}
