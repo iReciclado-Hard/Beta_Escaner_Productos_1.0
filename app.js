@@ -89,7 +89,7 @@ async function findProductData(code) {
             rowData[header[index]] = cell; // Mapea las celdas de cada fila a sus respectivos nombres de columna
         });
 
-        if (rowData['Código de Barras'] === code) { // Busca en la columna "Código de Barras"
+        if (rowData['BarCode'] === code) { // Busca en la columna "Código de Barras"
             return rowData; // Devuelve la fila completa como un objeto si encuentra el código
         }
     }
