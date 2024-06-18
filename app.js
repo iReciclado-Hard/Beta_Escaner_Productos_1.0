@@ -1,33 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
     const codeReader = new ZXing.BrowserQRCodeReader();
     const videoElement = document.getElementById('video-preview');
-    let scanning = false;
-
+    const startScanButton = document.getElementById('startScan');
+    const stopScanButton = document.getElementById('stopScan');
     const cameraSelect = document.getElementById('cameraSelect');
 
-    // Obtener y listar las cámaras disponibles
-    codeReader.listVideoInputDevices().then(videoInputDevices => {
-        videoInputDevices.forEach((device, index) => {
-            const option = document.createElement('option');
-            option.value = device.deviceId;
-            option.text = device.label || `Cámara ${index + 1}`;
-            cameraSelect.appendChild(option);
-        });
+    let scanning = false;
 
-        // Intentar seleccionar automáticamente la cámara trasera
-        const backCamera = videoInputDevices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('environment'));
-        if (backCamera) {
-            cameraSelect.value = backCamera.deviceId;
-            // Aplicar la clase .inverted si estamos usando la cámara trasera
-            videoElement.classList.add('inverted');
-        } else {
-            // En caso contrario, quitar la clase .inverted
-            videoElement.classList.remove('inverted');
-        }
-    }).catch(err => console.error('Error al obtener las cámaras:', err));
+    // Función para obtener y listar las cámaras disponibles
+    codeReader.listVideoInputDevices()
+        .then(videoInputDevices => {
+            videoInputDevices.forEach((device, index) => {
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || `Cámara ${index + 1}`;
+                cameraSelect.appendChild(option);
+            });
 
-    // Iniciar el escaneo
-    document.getElementById('startScan').addEventListener('click', () => {
+            // Intentar seleccionar automáticamente la cámara trasera si está disponible
+            const backCamera = videoInputDevices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('environment'));
+            if (backCamera) {
+                cameraSelect.value = backCamera.deviceId;
+            }
+        })
+        .catch(err => console.error('Error al obtener las cámaras:', err));
+
+    // Función para iniciar el escaneo
+    startScanButton.addEventListener('click', () => {
         if (!scanning) {
             const selectedDeviceId = cameraSelect.value;
             codeReader.decodeFromVideoDevice(selectedDeviceId, 'video-preview', (result, err) => {
@@ -43,38 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Detener el escaneo
-    document.getElementById('stopScan').addEventListener('click', () => {
+    // Función para detener el escaneo
+    stopScanButton.addEventListener('click', () => {
         if (scanning) {
             codeReader.reset();
             scanning = false;
             document.getElementById('productInfo').innerHTML = ''; // Limpiar la información del producto
-        }
-    });
-
-    // Cambiar la cámara seleccionada
-    cameraSelect.addEventListener('change', () => {
-        if (scanning) {
-            // Reiniciar el escaneo con la nueva cámara seleccionada
-            codeReader.reset();
-            const selectedDeviceId = cameraSelect.value;
-            codeReader.decodeFromVideoDevice(selectedDeviceId, 'video-preview', (result, err) => {
-                if (result) {
-                    console.log(result.text);
-                    findProductData(result.text).then(productData => displayProductData(productData));
-                }
-                if (err && !(err instanceof ZXing.NotFoundException)) {
-                    console.error('Error al escanear el código:', err);
-                }
-            });
-
-            // Aplicar o quitar la clase .inverted en función de la cámara seleccionada
-            const selectedOption = cameraSelect.selectedOptions[0];
-            if (selectedOption.text.toLowerCase().includes('back') || selectedOption.text.toLowerCase().includes('environment')) {
-                videoElement.classList.add('inverted');
-            } else {
-                videoElement.classList.remove('inverted');
-            }
         }
     });
 });
